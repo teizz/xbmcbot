@@ -1,2 +1,0 @@
-Artwork by Adobe/Yohei Shimomae [admin@phonegap.com], licensed under CC BY-NC 3.0 (http://phonegap.com/about/artwork)
-<div xmlns:cc="http://creativecommons.org/ns#" about="http://phonegap.com/about/artwork/"><a rel="cc:attributionURL" property="cc:attributionName" href="mailto:admin@phonegap.com">Adobe / Yohei Shimomae</a> / <a rel="license" href="http://creativecommons.org/licenses/by-nc/3.0/">CC BY-NC 3.0</a></div>

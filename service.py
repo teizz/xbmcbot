@@ -9,7 +9,7 @@ __addon_name__ = 'XBMCBot'
 __id__ = 'script.service.xbmcbot'
 __author__ = 'Mattijs'
 __platform__ = 'ALL'
-__version__ = '0.7.3'
+__version__ = '0.7.4'
 
 class IRCClient(Thread):
 
@@ -132,7 +132,10 @@ class IRCClient(Thread):
 
   def setDebug(self, debug):
     self.debug=debug
-
+ 
+  def getVersion(self):
+    return __version__
+  
   def log(self, message):
     tag='XBMCBot.EVENT'
     logline="%d %s:: %s" % (int(time.time()),tag,message)

@@ -5,6 +5,7 @@ class Command(command.Command):
     self.desc=dict({".echo <msg>":"Returns the string you send via private message",
                       ".auth <code>":"Authenticates to enable admin commands",
                       ".help":"Lists available commands",
+                      ".version":"returns the version of xbmcbot",
                })
     
   def parsecommand(self, src, cmd, arg):
@@ -20,3 +21,5 @@ class Command(command.Command):
         for key, value in c.description().items():
           if not key.startswith('!') or src in self.client.getAdmins():
             self.client.sendPrivateReply(src, "%s%s" % (key.ljust(16),value), True)
+    if cmd == ".version":
+      self.client.sendPrivateReply(src, self.client.getVersion())

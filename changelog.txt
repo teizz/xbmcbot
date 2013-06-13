@@ -1,4 +1,7 @@
-v0.7.3 - 13/06/2013
+v0.7.4- 13/06/2013
+  added '.version' public command to see what version is running
+
+v0.7.3- 13/06/2013
   added 'built-in' command which doesn't display in help. executes xbmc commands blindly
   added '!eventlog' command to display the last couple of lines from the eventlog
 

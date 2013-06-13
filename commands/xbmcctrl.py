@@ -25,6 +25,7 @@ class Command(command.Command):
                       'time':'tells the current position in playback as well as total time',
                       'seek':'skip to an absolute number of seconds or relative when using \'+\' or \'-\'',
                       'up':'moves up one directory',
+                      'pwd':'lists current working path',
                      })
 
   def parsecommand(self, src, cmd, arg):
@@ -113,6 +114,15 @@ class Command(command.Command):
           if i<1: tpath=tpath[:-1]
         self.more.append("Current path: %s" % tpath+self.wd['label'])
         self.pushmore(src)
+
+      if cmd == "built-in":
+        result=xbmc.executeBuiltin(arg)
+        if result:
+          self.more=[]
+          self.more.append(str(result))
+          self.pushmore(src)
+          return True
+        return False
 
   def jsonrpc(self, method, params=None):
     result={}

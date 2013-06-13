@@ -5,6 +5,7 @@ class Command(command.Command):
     self.desc=dict({"!shutdown":"Requests a graceful disconnect from the server",
                       "!die":"Disconnects from the server without saying goodbye",
                       "!raw <cmd>":"Sends a raw IRC command to the server",
+                      "!eventlog [#lines]":"Send last # of lines in eventlog (default:10)",
                       "!help <module>":"Get extended help on a certain module",
                })
   

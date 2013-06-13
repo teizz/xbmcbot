@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<settings>
+    <category label="32001">
+        <setting label="32002" type="text" id="nick" default="change_me"/>
+        <setting label="32003" type="text" id="name" default="XBMC Bot"/>
+        <setting label="32004" type="text" id="auth" default="change_me"/>
+    </category>
+    <category label="32101">
+        <setting label="32102" type="text" id="server" default="irc.oftc.net"/>
+        <setting label="32103" type="number" id="port" default="6667"/>
+        <setting label="32104" type="bool" id="ssl" default="false"/>
+        <setting type="sep"/>
+        <setting label="32105" type="bool" id="connect" default="false"/>
+    </category>
+    <category label="32201">
+        <setting label="32202" type="bool" id="debug" default="false"/>
+        <setting label="32203" type="bool" id="ipv6" default="false"/>
+    </category>
+</settings>
+

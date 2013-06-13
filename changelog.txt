@@ -1,0 +1,26 @@
+v0.7.0 - 13/06/2013
+  switched to event driven xbmc communication with Monitor() objects
+  reworked the way xbmcbot is started and restarted when things like settings change
+
+v0.5.5 - 12/06/2013
+  reworked all code for loading modules
+  auto reconnect and disconnect detection
+
+v0.5.2 - 07/06/2013
+  fixed some issues with play/pause etc
+
+v0.5.1 - 07/06/2013
+  getting time caused a crash, now fixed
+
+v0.5.0 - 07/06/2013
+  added support for playing youtube urls (sometimes)
+  added auto-reconnect when the client crashes or disconnects
+
+v0.4.3 - 06/06/2013
+  some code cleanup and better handling of sending data
+
+v0.4.1 - 04/06/2013
+  fixed regexp for nick recognition in private messages
+
+v0.4.0 - 04/06/2013
+  first public release

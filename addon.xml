@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<addon id="script.service.xbmcbot"
+       name="XBMCBot"
+       version="0.7.0"
+       provider-name="Mattijs">
+  <requires>
+    <import addon="xbmc.python"
+            version="2.1.0"/>
+    <import addon="xbmc.addon"
+            version="12.0.0"/>
+  </requires>
+  <extension point="xbmc.service" library="service.py" start="login"/>
+  <extension point="xbmc.addon.metadata">
+    <summary lang="en">Control XBMC via IRC</summary>
+    <description lang="en">XBMCBot is an IRC bot which allows you to get a listing of videos and have (at this time) limited control over playback. Send it a message with '.help' for commands.</description>
+    <language>en</language>
+    <platform>all</platform>
+    <license>GNU GENERAL PUBLIC LICENSE. Version 2, June 1991</license>
+    <forum></forum>
+    <website></website>
+    <email></email>
+    <source></source>
+  </extension>
+  <extension point="xbmc.addon.repository" name="XBMCBot Repository">
+    <info compressed="false">http://xbmc.nxdomain.nl/addons.xml</info>
+    <checksum>http://xbmc.nxdomain.nl/addons.xml.md5</checksum>
+    <datadir zip="false">http://xbmc.nxdomain.nl</datadir>
+  </extension>
+</addon>

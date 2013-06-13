@@ -9,7 +9,7 @@ __addon_name__ = 'XBMCBot'
 __id__ = 'script.service.xbmcbot'
 __author__ = 'Mattijs'
 __platform__ = 'ALL'
-__version__ = '0.7.2'
+__version__ = '0.7.3'
 
 class IRCClient(Thread):
 
@@ -199,7 +199,8 @@ class IRCClient(Thread):
         if self.privmsg_re.match(line):
           reply=self.privmsg_re.match(line).groupdict()
           for c in self.commands:
-            c.parseline(reply)
+            try: c.parseline(reply)
+            except: client.log("'%s' caused a command to raise an exception")
          
       if not self.flush(): self.disconnect()
 

@@ -116,7 +116,7 @@ class Command(command.Command):
         self.pushmore(src)
 
       if cmd == "built-in":
-        result=xbmc.executeBuiltin(arg)
+        result=xbmc.executebuiltin(arg)
         if result:
           self.more=[]
           self.more.append(str(result))

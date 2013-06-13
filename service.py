@@ -9,7 +9,7 @@ __addon_name__ = 'XBMCBot'
 __id__ = 'script.service.xbmcbot'
 __author__ = 'Mattijs'
 __platform__ = 'ALL'
-__version__ = '0.7.0'
+__version__ = '0.7.1'
 
 class IRCClient(Thread):
 

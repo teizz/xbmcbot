@@ -1,3 +1,8 @@
+v0.7.1 - 13/06/2013
+  added 'dir' command for Inga
+  added 'pwd' command to see where you are in the tree
+  added 'cd ..' command to compliment 'up'
+
 v0.7.0 - 13/06/2013
   switched to event driven xbmc communication with Monitor() objects
   reworked the way xbmcbot is started and restarted when things like settings change

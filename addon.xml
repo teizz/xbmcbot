@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <addon id="script.service.xbmcbot"
        name="XBMCBot"
-       version="0.8.0"
+       version="0.8.1"
        provider-name="Mattijs">
   <requires>
     <import addon="xbmc.python"

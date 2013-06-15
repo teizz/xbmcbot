@@ -1,5 +1,5 @@
 #!/usr/bin/python
-import time, os, sys, re
+import time, os, sys, re, traceback
 import socket, ssl, json
 from threading import Thread
 
@@ -203,7 +203,9 @@ class IRCClient(Thread):
           reply=self.privmsg_re.match(line).groupdict()
           for c in self.commands:
             try: c.parseline(reply)
-            except: client.log("'%s' caused a command to raise an exception")
+            except Exception as e:
+              print traceback.format_exc()
+              self.log("'%s' caused a command to raise an exception" % reply)
          
       if not self.flush(): self.disconnect()
 

@@ -16,7 +16,8 @@ class Command(command.Command):
         self.client.sendPrivateReply(src,"Asking the server to close my connection. Bye bye my love.",True)
         self.client.sendQuit()
       if cmd == "!die": #force connection close
-        self.client.sendPrivateReply(src,"Why?! Why did you kill me? It hurts so bad.",True)
+        self.client.sendPrivateReply(src,"Shot through the heart, and you're to blame... *dies*",True)
+        self.client.flush()
         self.client.disconnect()
       if cmd == "!raw":
         self.client.sendRaw(arg)

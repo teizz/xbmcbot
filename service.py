@@ -38,6 +38,7 @@ class IRCClient(Thread):
     self.admins=set()
     self.debug=False
     self.running=False
+    self.connected=False
     
     self.nick=nick
     self.auth=auth
@@ -55,9 +56,8 @@ class IRCClient(Thread):
     except: return False
     return True
 
-  def registerWithServer(self):
-    self.writebuffer.append("USER %s 8 * :%s" % (self.nick, self.name))
-    self.writebuffer.append("NICK %s" % self.nick)
+  def changeNick(self, nick):
+    self.writebuffer.append("NICK %s" % nick)
     return self.flush()
 
   def gracefullShutdown(self):
@@ -176,17 +176,21 @@ class IRCClient(Thread):
           code=self.code_re.match(line).groupdict()['message']
           if code.isdigit():
             code=int(code)
-            if code==1: self.log("Server accepted connection")
-            if code==376 or code==422: self.log("End of MOTD reached")
-            if code==433:
-              self.log("Nick already in use")
+            if code==376 or code==422:
+              self.connected=True
+            if code==433 and not self.connected:
               self.nick+="_"
-              self.registerWithServer()
+              self.changeNick(self.nick)
             
         # should match when the server hits us with an error
         if self.error_re.match(line):
-          self.log("Server sent hard error, closing connection")
+          self.log("Server closed the connection")
           self.stop()
+        
+        if self.nick_change_re.match(line):
+          change=self.nick_change_re.groupdict()
+          if change['old_nick']==self.nick:
+            self.nick=change['new_nick']
           
         # server responded to a ping request made by this client
         if self.pong_re.match(line):

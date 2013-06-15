@@ -58,7 +58,7 @@ class Command(command.Command):
           else: self.more.append("Failed to find directory matching %s" % arg)
         self.pushmore(src)
 
-      if cmd == "play":
+      if cmd == "play" and not arg=="":
         self.more=[]
         result=self.open(arg)
         if result:

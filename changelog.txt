@@ -1,7 +1,15 @@
-v0.7.4- 13/06/2013
+v0.8.0 - 15/06/2013
+  Fixed:  Made sure client keeps trying new nicks until connected (yes, you have to figure out from the logs which one it got)
+  Fixed:  Do a final send before disconnecting, so you know it got the message
+  Fixed:  Playing files from the list didn't always go case-sensitive first.
+  Fixed:  Prevent play from playing the first file when no arguments are given
+  Added:  Trace callback details are always printed when commands raise an exception
+  Change: Changed directory change behaviour (case-sensitive first, then case-insensitive if first fails. Was first case-insensitive first)
+
+v0.7.4 - 13/06/2013
   Added: '.version' public command to see what version is running
 
-v0.7.3- 13/06/2013
+v0.7.3 - 13/06/2013
   Added: 'built-in' command which doesn't display in help. executes xbmc commands blindly
   Added: '!eventlog' command to display the last couple of lines from the eventlog
 

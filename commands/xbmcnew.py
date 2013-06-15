@@ -76,7 +76,7 @@ class FileIndex():
     # if a result was found, update the dir stack and maybe update the index
     if result:
       self.pwd.append(item['label'])
-      if not testpath in tree:
+      if not testpath in self.tree:
         self.tree[self.getPwd()]=result
     return result is not None
 

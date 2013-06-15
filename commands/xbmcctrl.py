@@ -168,16 +168,19 @@ class Command(command.Command):
 
   def changeDirectory(self, name):
     if not len(self.ls): self.getls()
-    for i in self.ls:
-      if 'label' in i and i['label'].lower().count(name.lower()) and i['filetype'] == 'directory':
-        a=self.getDirectory(i['file'])
-        if a:
-          self.wdStack.append(self.wd)
-          self.lsStack.append(self.ls)
-          self.wd=i
-          self.ls=a
-          return a
-    return None
+    result=None
+    for i in (x for x in self.ls if not result):
+      if 'label' in i and i['filetype'] == 'directory':
+        if i['label'].count(name): result=self.getDirectory(i['file'])
+    for i in (x for x in self.ls if not result):
+      if 'label' in i and i['filetype'] == 'directory':
+        if i['label'].lower().count(name.lower()): result=self.getDirectory(i['file'])
+    if result:
+      self.wdStack.append(self.wd)
+      self.lsStack.append(self.ls)
+      self.wd=i
+      self.ls=result
+    return result
 
   def open(self, name):
     # see if we can match a youtube url, if so open video id with plugin
@@ -185,26 +188,24 @@ class Command(command.Command):
     if youtube_re.match(name): return self.openyoutube(youtube_re.match(name).groupdict()['id'])
 
     # try and find a matching filename
-    for i in self.ls:
+    for i in (x for x in self.ls if 'label' in x):
       # try to do an exact match first
-      if 'label' in i and i['label'].count(name):
+      if i['label'].count(name):
         if self.openurl(i['file']): return i['label']
-        else: return False
-      elif 'label' in i and i['label'].lower().count(name.lower()):
+    for i in (x for x in self.ls if 'label' in x):
+      # try and no a case insensitive match next
+      if i['label'].lower().count(name.lower()):
         if self.openurl(i['file']): return i['label']
-        else: return False
     # if all fails, try to open it as an URL and return the results
     return self.openurl(name)
 
   def openyoutube(self, id):
-    self.stopAll()
     xbmc.log("XBMCBot:: playing YouTube ID %s" % id)
     file="plugin://plugin.video.youtube/?action=play_video&videoid=%s" % id
     xbmc.executebuiltin("PlayMedia(%s)" % file)
     return "YouTube ID: %s" % id
 
   def openurl(self, url):
-    self.stopAll()
     a=self.jsonrpc("Player.Open",{'item':{'file':url}})
     if not 'error' in a: return url
     return False
@@ -283,16 +284,18 @@ class Command(command.Command):
   def time(self, type):
     if not type: type='all'
     playerid=self.getCurrentPlayerID(type)
-    if not playerid: return False
+    if playerid is not False:
 
-    curint=self.getCurrentTime(playerid)
-    totint=self.getTotalTime(playerid)
+      curint=self.getCurrentTime(playerid)
+      perint=self.getPercentage(playerid)
+      totint=self.getTotalTime(playerid)
 
-    if not curint or not totint: return False
-    perstr="%d%%" % int((1.0*curint/totint)*100)
-    curstr="%dh%dm%ds" % (curint/3600,(curint/60)%60,curint%60)
-    totstr="%dh%dm%ds" % (totint/3600,(totint/60)%60,totint%60)
-    return "%s/%s (%s)" % (curstr,totstr,perstr)
+      if not curint or not perint or not totint: return False
+      perstr="%g%%" % perint
+      curstr="%dh%dm%ds" % (curint/3600,(curint/60)%60,curint%60)
+      totstr="%dh%dm%ds" % (totint/3600,(totint/60)%60,totint%60)
+      return "%s/%s (%s)" % (curstr,totstr,perstr)
+    return False
 
   def up(self):
     if not len(self.wdStack): return False
@@ -308,15 +311,22 @@ class Command(command.Command):
 
   def getCurrentTime(self, playerid): #input player id as integer. returns current time in seconds
     player=self.getProperties(playerid)
-    if not 'time' in player: return False
+    if not player or 'time' not in player: return False
     curstr=player['time']
     curint=(curstr['hours']*3600)+(curstr['minutes']*60)+curstr['seconds']
     return curint
+  
+  def getPercentage(self, playerid):
+    player=self.getProperties(playerid)
+    if not player or 'percentage' not in player: return False
+    perstr=player['percentage']
+    perint=int(perstr*10)/10.0
+    return perint
 
   def getTotalTime(self, playerid): #input player id in integer. returns total running time in seconds
-    p=self.getProperties(playerid)
-    if not 'totaltime' in p: return False
-    totstr=p['totaltime']
+    player=self.getProperties(playerid)
+    if not player or 'totaltime' not in player: return False
+    totstr=player['totaltime']
     totint=(totstr['hours']*3600)+(totstr['minutes']*60)+totstr['seconds']
     return totint
 

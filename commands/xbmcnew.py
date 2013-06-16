@@ -95,17 +95,17 @@ class Command(command.Command):
     self.desc=dict({'!help xbmcctrl':'this modules offers extended help for admins',
                      })
     self.help=dict({'ls':'returns a listing of the current directory you\'re browsing',
-                      'rels':'returns a directory listing without using the cached version',
-                      'say':'broadcasts a message to all admins and to the local xbmc instance',
-                      'more':'display the rest of the text buffer, if any',
-                      'cd':'changes into a directory (full match first, first partial match second)',
-                      'play':'plays a file (exact, fuzzy or url. in that order)',
-                      'pause':'pause/resume current playback',
-                      'stop':'stop all current playback',
-                      'time':'tells the current position in playback as well as total time',
-                      'seek':'skip to an absolute number of seconds or relative when using \'+\' or \'-\'',
-                      'up':'moves up one directory',
-                      'pwd':'lists current working path',
+                    'rels':'returns a directory listing without using the cached version',
+                    'cd':'changes into a directory (full match first, first partial match second)',
+                    'up':'moves up one directory',
+                    'pwd':'lists current working path',
+                    'play':'plays a file (exact, fuzzy or url. in that order)',
+                    'pause':'pause/resume current playback',
+                    'stop':'stop all current playback',
+                    'time':'tells the current position in playback as well as total time',
+                    'seek':'skip to an absolute number of seconds or relative when using \'+\' or \'-\'',
+                    'say':'broadcasts a message to all admins and to the local xbmc instance',
+                    'more':'display the rest of the text buffer, if any',
                      })
 
   def parsecommand(self, src, cmd, arg):
@@ -117,6 +117,12 @@ class Command(command.Command):
       
       if cmd == "ls" or cmd == "dir":
         self.masters[src]['buffer']=self.masters[src]['index'].getFileList(arg)
+        self.pushmore(src)
+
+      if cmd == "rels":
+        if self.masters[src]['index'].forceUpdate():
+          self.masters[src]['buffer']=self.masters[src]['index'].getFileList(arg)
+        else: self.masters[src]['buffer']=['Failed to get a file listing']
         self.pushmore(src)
 
       if cmd == "cd":
@@ -133,19 +139,6 @@ class Command(command.Command):
 
       if cmd == "pwd":
         self.masters[src]['buffer']=["Current path: %s" % self.masters[src]['index'].getPwd()]
-        self.pushmore(src)
-
-      if cmd == "rels":
-        if self.masters[src]['index'].forceUpdate():
-          self.masters[src]['buffer']=self.masters[src]['index'].getFileList(arg)
-        else: self.masters[src]['buffer']=['Failed to get a file listing']
-        self.pushmore(src)
-
-      if cmd == "say":
-        self.localNotify("%s says: %s" % (nck,arg))
-        self.remoteNotify("%s says: %s" % (nck,arg))
-
-      if cmd == "more":
         self.pushmore(src)
 
       if cmd == "play" and not arg=="":
@@ -180,6 +173,13 @@ class Command(command.Command):
       if cmd == "seek":
         if self.seek(arg): self.masters[src]['buffer']=["Skipped to %s seconds" % arg]
         else: self.masters[src]['buffer']=["Unable to skip to %s seconds" % arg]
+        self.pushmore(src)
+
+      if cmd == "say":
+        self.localNotify("%s says: %s" % (nck,arg))
+        self.remoteNotify("%s says: %s" % (nck,arg))
+
+      if cmd == "more":
         self.pushmore(src)
 
       if cmd == "built-in":

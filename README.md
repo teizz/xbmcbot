@@ -5,8 +5,8 @@ Summary:
 --------
 XBMCBot is an IRC bot which allows you to get a listing of videos and have (at this time) limited control over playback. Send it a message with '.help' for commands.
 
-Functions:
----------
+General Functions:
+------------------
 * !list         print all loaded command modules
 * !reload name  reload an existing command module
 * !load name    load a new command module
@@ -21,6 +21,9 @@ Functions:
 * .echo msg     Returns the string you send via private message
 * .version      returns the version of xbmcbot
 * .uptime       Reports how long the bot has been running.
+
+XBMC Control Module:
+--------------------
 * ls            returns a listing of the current directory you're browsing
 * dir           same as 'ls'
 * rels          returns a directory listing without using the cached version
@@ -34,3 +37,8 @@ Functions:
 * time          tells the current position in playback as well as total time
 * seek          skip to an absolute number of seconds or relative when using '+' or '-'
 * more          display the rest of the text buffer, if any
+* volume        sets volume to something between 0 (mute) and 100
+* mute          sets volumet to 0
+* zoom          toggles between aspect ratios
+* info          displays info on current playing item on screen
+* fullscreen    hides or displays the fullscreen menu

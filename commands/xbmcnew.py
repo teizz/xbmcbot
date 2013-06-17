@@ -95,6 +95,7 @@ class Command(command.Command):
     self.desc=dict({'!help xbmcctrl':'this modules offers extended help for admins',
                      })
     self.help=dict({'ls':'returns a listing of the current directory you\'re browsing',
+                    'dir':'same as ls',
                     'rels':'returns a directory listing without using the cached version',
                     'cd':'changes into a directory (full match first, first partial match second)',
                     'up':'moves up one directory',

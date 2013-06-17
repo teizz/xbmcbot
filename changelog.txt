@@ -1,3 +1,11 @@
+v0.8.3 - 17/06/2013
+  Added:  Various new commands like 'volume', 'mute', 'zoom', and 'info'.
+  Change: Replaced copyrighted icon with my own artwork
+  Change: New 'xbmcnew' module is now the default
+  Change: 'built-in' and 'json-rpc' commands only work when debug is active
+  Added:  'cd..' now also works to get up one directory
+  Added:  'play' with function as pause when no arguments are given
+
 v0.8.2 - 16/06/2013
   Fixed: Minor bugfix when getting directory listings
 

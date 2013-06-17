@@ -87,6 +87,11 @@ class FileIndex():
     else: self.pwd.pop()
     return True
 
+  def home(self):
+    self.pwd=self.pwd[:1]
+    return self.pwd[0]
+  
+
 class Command(command.Command):
   def localInit(self):
     self.masters=dict()
@@ -132,7 +137,8 @@ class Command(command.Command):
         self.pushmore(src)
 
       if cmd == "cd":
-        if arg == "..": success = self.masters[src]['index'].up()
+        if len(arg)<=0: success = self.masters[src]['index'].home()
+        elif arg == "..": success = self.masters[src]['index'].up()
         else: success = self.masters[src]['index'].changeDirectory(arg)
         if success: self.masters[src]['buffer']=["Changed directory to %s" % self.masters[src]['index'].getCurrentDir()]
         else: self.masters[src]['buffer']=["Failed to change directory"]

@@ -29,8 +29,8 @@ class Command():
     if not 'src' in match or not 'message' in match: return False
     src=match['src']
     msg=match['message'].split(None,1)
-    cmd="".join(msg[:1])
-    arg="".join(msg[1:])
+    cmd=str().join(msg[:1])
+    arg=str().join(msg[1:])
     return self.parsecommand(src,cmd,arg)
 
   # Any local init that needs to be done can be put here. It will be called by the command __init__()

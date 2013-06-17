@@ -104,6 +104,11 @@ class Command(command.Command):
                     'stop':'stop all current playback',
                     'time':'tells the current position in playback as well as total time',
                     'seek':'skip to an absolute number of seconds or relative when using \'+\' or \'-\'',
+                    'volume':'sets volume to something between 0 (mute) and 100',
+                    'mute':'sets volumet to 0',
+                    'zoom':'toggles between aspect ratios',
+                    'info':'displays info on current playing item on screen',
+                    'fullscreen':'hides or displays the fullscreen menu',
                     'say':'broadcasts a message to all admins and to the local xbmc instance',
                     'more':'display the rest of the text buffer, if any',
                      })
@@ -132,7 +137,7 @@ class Command(command.Command):
         else: self.masters[src]['buffer']=["Failed to change directory"]
         self.pushmore(src)
 
-      if cmd == "up":
+      if cmd == "up" or cmd == "cd..":
         if self.up(): self.masters[src]['buffer']=["Changed directory to %s" % self.masters[src]['index'].getCurrentDir()]
         else: self.masters[src]['buffer']=["Failed to change directory"]
         self.pushmore(src)
@@ -141,12 +146,18 @@ class Command(command.Command):
         self.masters[src]['buffer']=["Current path: %s" % self.masters[src]['index'].getPwd()]
         self.pushmore(src)
 
-      if cmd == "play" and not arg=="":
-        result=self.open(arg)
-        if result:
-          self.masters[src]['buffer']=["Playing %s" % result]
-          self.localNotify("%s started playing %s" % (nck,result))
-        else: self.masters[src]['buffer']=["Failed playing %s" % arg]
+      if cmd == "play":
+        if len(arg)<=0:
+          if self.pause(arg):
+            self.masters[src]['buffer']=["Pause/Resume all playback"]
+            self.localNotify("%s toggled Pause/Resume" % nck)
+          else: self.masters[src]['buffer']=["Failed to Pause/Resume playback"]
+        else:
+          result=self.open(arg)
+          if result:
+            self.masters[src]['buffer']=["Playing %s" % result]
+            self.localNotify("%s started playing %s" % (nck,result))
+          else: self.masters[src]['buffer']=["Failed playing %s" % arg]
         self.pushmore(src)
 
       if cmd == "pause":
@@ -171,9 +182,18 @@ class Command(command.Command):
         self.pushmore(src)
 
       if cmd == "seek":
-        if self.seek(arg): self.masters[src]['buffer']=["Skipped to %s seconds" % arg]
+        if len(arg)>0 and self.seek(arg): self.masters[src]['buffer']=["Skipped to %s seconds" % arg]
         else: self.masters[src]['buffer']=["Unable to skip to %s seconds" % arg]
         self.pushmore(src)
+
+      if cmd == "volume":
+        if len(arg)>0 and self.volume(arg): self.masters[src]['buffer']=["Set volume to %s" % arg]
+        else: self.masters[src]['buffer']=["Unable to set volume to %s" % arg]
+        self.pushmore(src)
+
+      if cmd == "mute":
+        if self.volume("0"): self.masters[src]['buffer']=["Toggled mute/unmute"]
+        else: self.masters[src]['buffer']=["Failed to toggle mute/unmute"]
 
       if cmd == "say":
         self.localNotify("%s says: %s" % (nck,arg))
@@ -182,16 +202,30 @@ class Command(command.Command):
       if cmd == "more":
         self.pushmore(src)
 
-      if cmd == "built-in":
+      if cmd == "zoom":
+        if self.executeAction("aspectratio"): self.masters[src]['buffer']=["Toggled aspect ratio"]
+        else: self.masters[src]['buffer']=["Failed to toggle aspect ratio"]
+
+      if cmd == "info":
+        if self.executeAction("info"): self.masters[src]['buffer']=["Toggled info"]
+        else: self.masters[src]['buffer']=["Failed to toggle info"]
+
+      if cmd == "fullscreen":
+        if self.executeAction("fullscreen"): self.masters[src]['buffer']=["Toggled fullscreen display"]
+        else: self.masters[src]['buffer']=["Failed to fullscreen display"]
+
+      # Dangerous unchecked functions which should only be available when debuggin is turned on
+
+      if cmd == "built-in" and client.debug:
         result=xbmc.executebuiltin(arg)
         if result:
           self.masters[src]['buffer']=[str(result)]
           self.pushmore(src)
       
-      if cmd == "json-rpc":
+      if cmd == "json-rpc" and client.debug:
         method=str().join(arg.split(None,1)[:1])
-        params=arg.split(None,1)[1:]
-        if len(params)>0: result=self.jsonrpc(method, params)
+        params=str().join(arg.split(None,1)[1:])
+        if len(params)>0: result=self.jsonrpc(method, json.loads(params))
         else: result=self.jsonrpc(method)
         if result:
           self.masters[src]['buffer']=[str(result)]
@@ -206,6 +240,10 @@ class Command(command.Command):
     except: pass
     if _DEBUG_JSON: self.client.log(result)
     return json.loads(result)
+
+  def executeAction(self, action):
+    if 'error' in self.jsonrpc("Input.ExecuteAction", {"action":action}): return False
+    return True
   
   def open(self, name):
     # see if we can match a youtube url, if so open video id with plugin
@@ -274,6 +312,19 @@ class Command(command.Command):
       if 'error' in result: return False
       return type
     return False
+
+  def volume(self, vol):
+    # return error if input is not absolute or relative value
+    try: vol=int(vol)
+    except: return False
+    if vol<=0: return self.mute()
+    elif not self.mute(False): return False
+    else: return 'error' not in self.jsonrpc("Application.SetVolume",{'volume':int(vol)})
+  
+  def mute(self, toggle=True):
+    if 'error' in self.jsonrpc("Application.SetMute",{'mute':False}): return False
+    elif toggle: return 'error' not in self.jsonrpc("Application.SetMute",{'mute':True})
+    return True
 
   def seek(self, secs):
     # return error if input is not absolute or relative value

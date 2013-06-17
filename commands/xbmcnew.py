@@ -187,6 +187,15 @@ class Command(command.Command):
         if result:
           self.masters[src]['buffer']=[str(result)]
           self.pushmore(src)
+      
+      if cmd == "json-rpc":
+        method=str().join(arg.split(None,1)[:1])
+        params=arg.split(None,1)[1:]
+        if len(params)>0: result=self.jsonrpc(method, params)
+        else: result=self.jsonrpc(method)
+        if result:
+          self.masters[src]['buffer']=[str(result)]
+          self.pushmore(src)
 
   def jsonrpc(self, method, params=None):
     result={}

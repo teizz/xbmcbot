@@ -1,3 +1,7 @@
+v0.8.4 - 17/06/2013
+  Fixed: rels didn't actually re-read the index
+  Fixed: play still tried to use the old single-user index
+
 v0.8.3 - 17/06/2013
   Added:  Various new commands like 'volume', 'mute', 'zoom', and 'info'.
   Change: Replaced copyrighted icon with my own artwork

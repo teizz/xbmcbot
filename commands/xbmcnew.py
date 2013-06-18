@@ -38,11 +38,22 @@ class FileIndex():
         else: result.append("F %s" % i['label']) #otherwise it's a file and append "F"
     return result
 
+  def getFileNames(self, match):
+    files=[]
+    for i in self.tree[self.getPwd()]: #check every entry in the dirlist
+      if 'label' in i and i['label'].count(match): files.append(i) #case sensitive first
+    for i in self.tree[self.getPwd()]: #check the list a second time
+      if 'label' in i and i['label'].lower().count(match.lower()): #time time case-insensitive
+        if i not in files: files.append(i) # append any files missed the first time
+    return files
+
   def forceUpdate(self):
     if len(self.pwd)<=1:
       self.tree[self.getPwd()]=self.getSources(self.media)
       return True
-    else: return changeDirectory(self.pwd.pop())
+    else:
+      del self.tree[self.getPwd()]
+      return self.changeDirectory(self.pwd.pop())
 
   # current working path just a nice representation of the dir stack
   def getPwd(self):
@@ -160,7 +171,7 @@ class Command(command.Command):
             self.localNotify("%s toggled Pause/Resume" % nck)
           else: self.masters[src]['buffer']=["Failed to Pause/Resume playback"]
         else:
-          result=self.open(arg)
+          result=self.open(arg, self.masters[src]['index'])
           if result:
             self.masters[src]['buffer']=["Playing %s" % result]
             self.localNotify("%s started playing %s" % (nck,result))
@@ -252,20 +263,16 @@ class Command(command.Command):
     if 'error' in self.jsonrpc("Input.ExecuteAction", {"action":action}): return False
     return True
   
-  def open(self, name):
+  def open(self, name, index):
     # see if we can match a youtube url, if so open video id with plugin
     youtube_re=re.compile('(https?://)?(www\.)?youtube\..*?v=(?P<id>[\w-]+)\?*.*')
     if youtube_re.match(name): return self.openyoutube(youtube_re.match(name).groupdict()['id'])
 
-    # try and find a matching filename
-    for i in (x for x in self.ls if 'label' in x):
-      # try to do an exact match first
-      if i['label'].count(name):
+    indexmatches=index.getFileNames(name)
+    if len(indexmatches)>0:
+      for i in indexmatches:
         if self.openurl(i['file']): return i['label']
-    for i in (x for x in self.ls if 'label' in x):
-      # try and no a case insensitive match next
-      if i['label'].lower().count(name.lower()):
-        if self.openurl(i['file']): return i['label']
+
     # if all fails, try to open it as an URL and return the results
     return self.openurl(name)
 

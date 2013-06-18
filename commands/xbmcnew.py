@@ -234,13 +234,13 @@ class Command(command.Command):
 
       # Dangerous unchecked functions which should only be available when debuggin is turned on
 
-      if cmd == "built-in" and client.debug:
+      if cmd == "built-in" and self.client.debug:
         result=xbmc.executebuiltin(arg)
         if result:
           self.masters[src]['buffer']=[str(result)]
           self.pushmore(src)
       
-      if cmd == "json-rpc" and client.debug:
+      if cmd == "json-rpc" and self.client.debug:
         method=str().join(arg.split(None,1)[:1])
         params=str().join(arg.split(None,1)[1:])
         if len(params)>0: result=self.jsonrpc(method, json.loads(params))
@@ -267,14 +267,14 @@ class Command(command.Command):
     # see if we can match a youtube url, if so open video id with plugin
     youtube_re=re.compile('(https?://)?(www\.)?youtube\..*?v=(?P<id>[\w-]+)\?*.*')
     if youtube_re.match(name): return self.openyoutube(youtube_re.match(name).groupdict()['id'])
-
     indexmatches=index.getFileNames(name)
     if len(indexmatches)>0:
       for i in indexmatches:
-        if self.openurl(i['file']): return i['label']
-
+        if 'filetype' in i and i['filetype']=='directory':
+          if self.opendir(i['file']): return i['label']
+        elif self.openfile(i['file']): return i['label']
     # if all fails, try to open it as an URL and return the results
-    return self.openurl(name)
+    return self.openfile(name)
 
   def openyoutube(self, id):
     xbmc.log("XBMCBot:: playing YouTube ID %s" % id)
@@ -282,9 +282,14 @@ class Command(command.Command):
     xbmc.executebuiltin("PlayMedia(%s)" % file)
     return "YouTube ID: %s" % id
 
-  def openurl(self, url):
-    a=self.jsonrpc("Player.Open",{'item':{'file':url}})
-    if not 'error' in a: return url
+  def openfile(self, name):
+    a=self.jsonrpc("Player.Open",{'item':{'file':name}})
+    if not 'error' in a: return name
+    return False
+
+  def opendir(self, name):
+    a=self.jsonrpc("Player.Open",{'item':{'directory':name}})
+    if not 'error' in a: return name
     return False
 
   def getCurrentPlayer(self, type):

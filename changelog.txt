@@ -1,3 +1,6 @@
+v0.8.6 - 20/06/2013
+  Fixed: Bug report by Inga: 'cd..' and 'up' didn't work. Fixed now
+
 v0.8.5 - 17/06/2013
   Fixed: 'built-in' and 'json-rpc' failed to detect debug setting
   Added: 'play' now plays directories recursively too

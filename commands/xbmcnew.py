@@ -156,7 +156,7 @@ class Command(command.Command):
         self.pushmore(src)
 
       if cmd == "up" or cmd == "cd..":
-        if self.up(): self.masters[src]['buffer']=["Changed directory to %s" % self.masters[src]['index'].getCurrentDir()]
+        if self.masters[src]['index'].up(): self.masters[src]['buffer']=["Changed directory to %s" % self.masters[src]['index'].getCurrentDir()]
         else: self.masters[src]['buffer']=["Failed to change directory"]
         self.pushmore(src)
 

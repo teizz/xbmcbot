@@ -21,9 +21,4 @@
     <email></email>
     <source></source>
   </extension>
-  <extension point="xbmc.addon.repository" name="XBMCBot Repository">
-    <info compressed="false">http://xbmc.nxdomain.nl/addons.xml</info>
-    <checksum>http://xbmc.nxdomain.nl/addons.xml.md5</checksum>
-    <datadir zip="false">http://xbmc.nxdomain.nl</datadir>
-  </extension>
 </addon>

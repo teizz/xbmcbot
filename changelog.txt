@@ -1,3 +1,8 @@
+v0.8.7 - 24/02/2014
+  Rollback: There was a 0.8.7 on github, but not in working order. I had no
+            clue what was going on but I messed up. Back to a working version.
+            Also removed the repo entry.
+
 v0.8.6 - 20/06/2013
   Fixed: Bug report by Inga: 'cd..' and 'up' didn't work. Fixed now
 

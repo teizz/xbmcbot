@@ -202,7 +202,7 @@ class Command(command.Command):
       else:
         matches_all_partials = True
         for partial in name.lower().split(' '):
-          if not i['file'].lower.count(partial.lower()):
+          if not i['file'].lower().count(partial.lower()):
             matches_all_partials = False
         if matches_all_partials:
           if self.openurl(i['file']): return i['label']

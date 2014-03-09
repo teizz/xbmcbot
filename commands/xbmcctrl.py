@@ -187,9 +187,6 @@ class Command(command.Command):
     youtube_re=re.compile('(https?://)?(www\.)?youtube\..*?v=(?P<id>[\w-]+)\?*.*')
     if youtube_re.match(name): return self.openyoutube(youtube_re.match(name).groupdict()['id'])
 
-    #debug
-    self.localNotify("Attempting to play: " + name, 10000)
-
     # try and find a matching filename
     for i in (x for x in self.ls if 'label' in x):
       # try to do an exact match first

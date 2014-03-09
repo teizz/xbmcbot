@@ -188,7 +188,7 @@ class Command(command.Command):
     if youtube_re.match(name): return self.openyoutube(youtube_re.match(name).groupdict()['id'])
 
     #debug
-    self.localNotify(self.ls[0]['file'], 10000)
+    self.localNotify(str(self.ls[0]['file']), 10000)
 
     # try and find a matching filename
     for i in (x for x in self.ls if 'label' in x):

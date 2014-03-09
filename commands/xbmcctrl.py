@@ -187,9 +187,6 @@ class Command(command.Command):
     youtube_re=re.compile('(https?://)?(www\.)?youtube\..*?v=(?P<id>[\w-]+)\?*.*')
     if youtube_re.match(name): return self.openyoutube(youtube_re.match(name).groupdict()['id'])
 
-    #debug
-    self.localNotify(str(self.ls[3]['file']), 10000)
-
     # try and find a matching filename
     for i in (x for x in self.ls if 'label' in x):
       # try to do an exact match first
@@ -200,12 +197,10 @@ class Command(command.Command):
         if self.openurl(i['file']): return i['label']
       # try to match partials in lowercase, using full filename instead of just label
       else:
-        matches_all_partials = True
         for partial in name.lower().split(' '):
-          if not i['file'].lower().count(partial.lower()):
-            matches_all_partials = False
-        if matches_all_partials:
-          if self.openurl(i['file']): return i['label']
+          if not i['label'].lower().count(partial.lower()):
+            continue
+        if self.openurl(i['file']): return i['label']
 
     # if all fails, try to open it as an URL and return the results
     return self.openurl(name)

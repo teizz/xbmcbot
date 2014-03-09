@@ -195,11 +195,11 @@ class Command(command.Command):
       # try to match with lowercase
       elif i['label'].lower().count(name.lower()):
         if self.openurl(i['file']): return i['label']
-      # try to match partials in lowercase
+      # try to match partials in lowercase, using full filename instead of just label
       else:
         matches_all_partials = True
         for partial in name.lower().split(' '):
-          if not i['label'].lower.count(partial.lower()):
+          if not i['file'].lower.count(partial.lower()):
             matches_all_partials = False
         if matches_all_partials:
           if self.openurl(i['file']): return i['label']

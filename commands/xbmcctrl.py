@@ -192,10 +192,18 @@ class Command(command.Command):
       # try to do an exact match first
       if i['label'].count(name):
         if self.openurl(i['file']): return i['label']
-    for i in (x for x in self.ls if 'label' in x):
-      # try and no a case insensitive match next
-      if i['label'].lower().count(name.lower()):
+      # try to match with lowercase
+      elif i['label'].lower().count(name.lower()):
         if self.openurl(i['file']): return i['label']
+      # try to match partials in lowercase
+      else:
+        matches_all_partials = True
+        for partial in name.lower().split(' '):
+          if not i['label'].lower.count(partial.lower()):
+            matches_all_partials = False
+        if matches_all_partials:
+          if self.openurl(i['file']): return i['label']
+
     # if all fails, try to open it as an URL and return the results
     return self.openurl(name)
 

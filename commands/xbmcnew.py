@@ -41,10 +41,21 @@ class FileIndex():
   def getFileNames(self, match):
     files=[]
     for i in self.tree[self.getPwd()]: #check every entry in the dirlist
-      if 'label' in i and i['label'].count(match): files.append(i) #case sensitive first
-    for i in self.tree[self.getPwd()]: #check the list a second time
-      if 'label' in i and i['label'].lower().count(match.lower()): #time time case-insensitive
+      if 'label' in i and i['label'].count(match):
+        files.append(i) #case sensitive first
+
+    for i in self.tree[self.getPwd()]: #check a second time for case-sensitive
+      if 'label' in i and i['label'].lower().count(match.lower()): #this time case-insensitive
         if i not in files: files.append(i) # append any files missed the first time
+
+    for i in self.tree[self.getPwd()]: #check third time for partial matches separated by whitespace:
+      matches_all_partials = True
+      for partial in match.split(' '):
+        if not i['label'].lower().count(partial.lower()):
+          matches_all_partials = False
+      if matches_all_partials:
+        files.append(i)
+
     return files
 
   def forceUpdate(self):

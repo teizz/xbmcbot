@@ -1,6 +1,11 @@
 import command, json, xbmc, re
 
-_DEBUG_JSON=True
+_DEBUG_JSON=False
+
+# create some quick tests we can do.
+strmall=lambda x,y: x.count(y) # >0 if substring matches
+strmlow=lambda x,y: x.lower().count(y.lower()) # >0 if substring matches case insensitive
+strmany=lambda x,y: all([False for i in y.lower().split() if i not in x.lower()]) # True if all components of substring match
 
 class FileIndex():
   def __init__(self, media='video'):
@@ -33,29 +38,25 @@ class FileIndex():
   def getFileList(self, match):
     result=[]
     for i in self.tree[self.getPwd()]: #check every entry in the dirlist
-      if 'label' in i and i['label'].lower().count(match.lower()): #if the name matches the search display it, empty match variables always match
+      if 'label' in i and strmlow(i['label'],match): #if the name matches the search display it, empty match variables always match
         if 'filetype' in i and i['filetype'] == 'directory': result.append("D %s" % i['label']) #if it was a directory append "D"
         else: result.append("F %s" % i['label']) #otherwise it's a file and append "F"
     return result
 
   def getFileNames(self, match):
-    files=[]
-    for i in self.tree[self.getPwd()]: #check every entry in the dirlist
-      if 'label' in i and i['label'].count(match):
-        files.append(i) #case sensitive first
+    # fetch the dirlist once
+    dirlist=self.tree[self.getPwd()]
 
-    for i in self.tree[self.getPwd()]: #check a second time for case-sensitive
-      if 'label' in i and i['label'].lower().count(match.lower()): #this time case-insensitive
-        if i not in files: files.append(i) # append any files missed the first time
+    # make a list of items that match
+    files=[i for i in dirlist if strmall(i['label'], match)]
 
-    for i in self.tree[self.getPwd()]: #check third time for partial matches separated by whitespace:
-      matches_all_partials = True
-      for partial in match.split(' '):
-        if not i['label'].lower().count(partial.lower()):
-          matches_all_partials = False
-      if matches_all_partials:
-        files.append(i)
+    # extend with a list of items not yet matched, but would if case insensitive
+    files.extend([i for i in dirlist if i not in files and strmlow(i['label'], match)])
 
+    # extend with a list of items not yet matched, but would when components are not ordered
+    files.extend([i for i in dirlist if i not in files and strmany(i['label'], match)])
+
+    # the final list is returned, 'best' matching items first
     return files
 
   def forceUpdate(self):
@@ -79,7 +80,7 @@ class FileIndex():
     # go through all items as long as no result is found, the item has a label and is a directory
     for item in (x for x in self.tree[self.getPwd()] if not result and 'label' in x and x['filetype']=='directory'):
       # if the item partially matches the name being changed to
-      if item['label'].count(name):
+      if strmall(item['label'],name):
         # check if the index has been chached
         testpath=self.getPwd()+item['label']+"/"
         if testpath in self.tree: result=self.tree[testpath]
@@ -88,7 +89,7 @@ class FileIndex():
           
     for item in (x for x in self.tree[self.getPwd()] if not result and 'label' in x and x['filetype']=='directory'):
       # if the item partially matches the name being changed to (this time case-insensitive)
-      if item['label'].lower().count(name.lower()):
+      if strmlow(item['label'],name):
         # check if the index has been chached
         testpath=self.getPwd()+item['label']+"/"
         if testpath in self.tree: result=self.tree[testpath]
